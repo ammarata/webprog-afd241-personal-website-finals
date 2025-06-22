@@ -30,6 +30,13 @@
             <li><a href="#hobbies" class="nav-link"><i class="fas fa-palette"></i> <span>Hobbies</span></a></li>
             <li><a href="#gallery" class="nav-link"><i class="fa-solid fa-camera"></i> <span>Picture Gallery</span></a></li>
         </ul>
+        <div class="dark-mode-toggle">
+            <i class="fas fa-moon"></i>
+            <label class="switch">
+                <input type="checkbox" id="darkModeToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
     </nav>
 
     <div class="main-content">
@@ -179,7 +186,26 @@
                             <img src="src/gallery/8.jpg" alt="Gallery image 6">
                         </div>
                     </div>
-                </section>     
+                </section>
+                
+                <!-- Guestbook Section -->
+                <section class="section-card" id="guestbook">
+                    <h2 class="section-title">Guestbook</h2>
+                    <form id="guestbook-form">
+                        <input type="text" id="guestbook-name" placeholder="Your Name" required>
+                        <textarea id="guestbook-comment" placeholder="Your comment of the site..." required></textarea>
+                        <button type="submit">Sign Guestbook</button>
+                    </form>
+                    <div id="guestbook-entries">
+                        <!-- Example Entry -->
+                        <div class="guestbook-entry">
+                            <p class="entry-name">John Doe</p>
+                            <p>Great website! Very informative.</p>
+                            <p class="entry-date">June 22, 2025</p>
+                        </div>
+                    </div>
+                </section>
+
             </main>
         </div>
     </div>
