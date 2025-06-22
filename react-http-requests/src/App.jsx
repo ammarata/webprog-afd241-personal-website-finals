@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react';
-// This import is the first potential point of failure. 
-// If supabaseClient.js has an error, `supabase` will be invalid.
 import { supabase } from './supabaseClient';
 import './App.css';
 
@@ -15,14 +13,11 @@ function App() {
       try {
         setLoading(true);
 
-        // This is the second potential point of failure.
-        // If `supabase` is invalid, this line will throw the error you see in the console.
         const { data, error } = await supabase
           .from('guestbook_entries')
           .select('*')
           .order('created_at', { ascending: false });
 
-        // The 'error' object from Supabase will contain details if the request fails.
         if (error) {
           throw error;
         }
@@ -74,8 +69,6 @@ function App() {
     }
   };
 
-  // ... (rest of your return/JSX code is the same)
-  // The JSX is unlikely to be the problem unless an object it's trying to render is invalid.
   return (
     <div className="container">
       <header className="guestbook-header">
