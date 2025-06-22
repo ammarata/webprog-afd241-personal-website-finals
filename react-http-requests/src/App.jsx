@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-import { supabase } from './supabaseClient'; // Import the Supabase client
+// This import is the first potential point of failure. 
+// If supabaseClient.js has an error, `supabase` will be invalid.
+import { supabase } from './supabaseClient';
 import './App.css';
 
 function App() {
@@ -8,25 +10,24 @@ function App() {
   const [comment, setComment] = useState('');
   const [loading, setLoading] = useState(true);
 
-  // No longer need the old fetchEntries function
-
   useEffect(() => {
-    // Define an async function to get entries from Supabase
     const getEntries = async () => {
       try {
         setLoading(true);
-        // Select all entries from the 'guestbook_entries' table, ordered by creation date
+
+        // This is the second potential point of failure.
+        // If `supabase` is invalid, this line will throw the error you see in the console.
         const { data, error } = await supabase
           .from('guestbook_entries')
           .select('*')
           .order('created_at', { ascending: false });
 
+        // The 'error' object from Supabase will contain details if the request fails.
         if (error) {
           throw error;
         }
 
         if (data) {
-          // The date from Supabase is a string, so we'll format it
           const formattedData = data.map(entry => ({
               ...entry,
               date: new Date(entry.created_at).toLocaleString()
@@ -34,6 +35,7 @@ function App() {
           setEntries(formattedData);
         }
       } catch (error) {
+        // This 'catch' block will log the detailed error to your browser's console.
         console.error('Error fetching entries:', error.message);
       } finally {
         setLoading(false);
@@ -41,24 +43,22 @@ function App() {
     };
 
     getEntries();
-  }, []); // The empty dependency array ensures this runs only once on mount
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (name.trim() && comment.trim()) {
       try {
-        // Insert a new row into the 'guestbook_entries' table
         const { data, error } = await supabase
           .from('guestbook_entries')
           .insert([{ name, comment }])
-          .select(); // .select() returns the inserted data
+          .select();
 
         if (error) {
           throw error;
         }
         
         if (data) {
-            // Add the new entry to the top of the list in the UI
             const newEntry = {
                 ...data[0],
                 date: new Date(data[0].created_at).toLocaleString()
@@ -74,13 +74,14 @@ function App() {
     }
   };
 
+  // ... (rest of your return/JSX code is the same)
+  // The JSX is unlikely to be the problem unless an object it's trying to render is invalid.
   return (
     <div className="container">
       <header className="guestbook-header">
         <h1>Guestbook</h1>
         <p>Leave a comment and sign the guestbook!</p>
       </header>
-
       <main>
         <section className="section-card">
           <h2 className="section-title">Sign the Guestbook</h2>
@@ -109,7 +110,6 @@ function App() {
             <button type="submit">Sign Guestbook</button>
           </form>
         </section>
-
         <section className="section-card">
           <h2 className="section-title">Entries</h2>
           <div id="guestbook-entries-list">
