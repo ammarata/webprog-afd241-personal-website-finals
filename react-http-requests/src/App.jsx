@@ -1,13 +1,8 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 
-// A mock API function to simulate fetching data
 const fetchEntries = async () => {
-  // In a real application, you would make an API call here.
-  // For now, we'll return some mock data.
   return [
-    { id: 1, name: 'John Doe', comment: 'This is a great website!', date: new Date().toLocaleString() },
-    { id: 2, name: 'Jane Smith', comment: 'I really enjoyed my visit.', date: new Date().toLocaleString() },
   ];
 };
 
