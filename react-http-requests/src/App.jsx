@@ -1,10 +1,6 @@
 import { useState, useEffect } from 'react';
+import { supabase } from './supabaseClient'; // Import the Supabase client
 import './App.css';
-
-const fetchEntries = async () => {
-  return [
-  ];
-};
 
 function App() {
   const [entries, setEntries] = useState([]);
@@ -12,28 +8,69 @@ function App() {
   const [comment, setComment] = useState('');
   const [loading, setLoading] = useState(true);
 
+  // No longer need the old fetchEntries function
+
   useEffect(() => {
+    // Define an async function to get entries from Supabase
     const getEntries = async () => {
-      const initialEntries = await fetchEntries();
-      setEntries(initialEntries);
-      setLoading(false);
+      try {
+        setLoading(true);
+        // Select all entries from the 'guestbook_entries' table, ordered by creation date
+        const { data, error } = await supabase
+          .from('guestbook_entries')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          throw error;
+        }
+
+        if (data) {
+          // The date from Supabase is a string, so we'll format it
+          const formattedData = data.map(entry => ({
+              ...entry,
+              date: new Date(entry.created_at).toLocaleString()
+          }));
+          setEntries(formattedData);
+        }
+      } catch (error) {
+        console.error('Error fetching entries:', error.message);
+      } finally {
+        setLoading(false);
+      }
     };
 
     getEntries();
-  }, []);
+  }, []); // The empty dependency array ensures this runs only once on mount
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (name.trim() && comment.trim()) {
-      const newEntry = {
-        id: entries.length + 1,
-        name,
-        comment,
-        date: new Date().toLocaleString(),
-      };
-      setEntries([newEntry, ...entries]);
-      setName('');
-      setComment('');
+      try {
+        // Insert a new row into the 'guestbook_entries' table
+        const { data, error } = await supabase
+          .from('guestbook_entries')
+          .insert([{ name, comment }])
+          .select(); // .select() returns the inserted data
+
+        if (error) {
+          throw error;
+        }
+        
+        if (data) {
+            // Add the new entry to the top of the list in the UI
+            const newEntry = {
+                ...data[0],
+                date: new Date(data[0].created_at).toLocaleString()
+            };
+            setEntries([newEntry, ...entries]);
+            setName('');
+            setComment('');
+        }
+
+      } catch (error) {
+        console.error('Error signing the guestbook:', error.message);
+      }
     }
   };
 
