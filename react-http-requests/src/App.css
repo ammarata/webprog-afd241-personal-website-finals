@@ -7,6 +7,11 @@
   --shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -76,6 +81,8 @@
   font-family: inherit;
   font-size: 1rem;
   box-sizing: border-box;
+  background-color: var(--surface-color);
+  color: var(--text-color);
 }
 
 #guestbook-form textarea {
